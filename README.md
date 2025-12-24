@@ -201,7 +201,7 @@ Si encuentras problemas o tienes preguntas:
 
 ## Licencia
 
-[Especifica tu licencia aquí, por ejemplo MIT]
+TBD
 
 ## Reconocimientos
 
