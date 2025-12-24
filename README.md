@@ -60,11 +60,9 @@ Después de instalar las skills:
 
 | Skill | Descripción | Casos de Uso |
 |-------|-------------|--------------|
-| `api-spec-generator` | Genera especificaciones OpenAPI/Swagger | Crear documentación API desde código |
-| `endpoint-creator` | Crea endpoints REST siguiendo best practices | Scaffolding rápido de endpoints |
+| `mulesoft-documentor` | Genera la documentación de una aplicacion MuleSoft | Crear documentación de aplicación MuleSoft cuando esta no existe |
 | `api-testing` | Genera tests para APIs | Crear suites de pruebas automáticas |
 | `api-docs` | Documenta APIs existentes | Mantener documentación actualizada |
-| `schema-validator` | Valida schemas JSON/OpenAPI | Verificar consistencia de contratos |
 
 *(Esta tabla se actualizará conforme se agreguen más skills)*
 
