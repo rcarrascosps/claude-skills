@@ -1,179 +1,179 @@
 # Claude Code Skills - API Development Automation
 
-Este repositorio contiene una colección de skills personalizadas para Claude Code, diseñadas específicamente para automatizar y optimizar tareas relacionadas con el desarrollo de APIs.
+This repository contains a collection of custom skills for Claude Code, specifically designed to automate and optimize tasks related to API development.
 
-## 📋 Tabla de Contenidos
+## 📋 Table of Contents
 
-- [¿Qué son las Skills de Claude Code?](#qué-son-las-skills-de-claude-code)
-- [Instalación](#instalación)
-- [Skills Disponibles](#skills-disponibles)
-- [Cómo Usar las Skills](#cómo-usar-las-skills)
-- [Crear tus Propias Skills](#crear-tus-propias-skills)
-- [Contribuir](#contribuir)
+- [What are Claude Code Skills?](#what-are-claude-code-skills)
+- [Installation](#installation)
+- [Available Skills](#available-skills)
+- [How to Use the Skills](#how-to-use-the-skills)
+- [Creating Your Own Skills](#creating-your-own-skills)
+- [Contributing](#contributing)
 
-## ¿Qué son las Skills de Claude Code?
+## What are Claude Code Skills?
 
-Las skills son conjuntos de instrucciones y conocimientos especializados que extienden las capacidades de Claude Code para realizar tareas específicas de manera más eficiente y consistente. En este caso, nuestras skills están enfocadas en automatizar procesos comunes en el desarrollo de APIs.
+Skills are sets of specialized instructions and knowledge that extend Claude Code's capabilities to perform specific tasks more efficiently and consistently. In this case, our skills are focused on automating common processes in API development.
 
-## Instalación
+## Installation
 
-### Método 1: Instalación Manual
+### Method 1: Manual Installation
 
-1. **Localiza tu directorio de skills de Claude Code:**
+1. **Locate your Claude Code skills directory:**
    - **macOS/Linux**: `~/.claude/skills/`
    - **Windows**: `%USERPROFILE%\.claude\skills\`
 
-2. **Clona este repositorio:**
+2. **Clone this repository:**
 ```bash
-   cd ~/.claude/skills/  # o la ruta correspondiente en Windows
-   git clone https://github.com/tu-usuario/claude-code-api-skills.git
+   cd ~/.claude/skills/  # or the corresponding path on Windows
+   git clone https://github.com/your-username/claude-code-api-skills.git
 ```
 
-3. **Copia las skills individuales:**
+3. **Copy the individual skills:**
 ```bash
    cp -r claude-code-api-skills/skills/* .
 ```
 
-### Método 2: Instalación por Skill Individual
+### Method 2: Individual Skill Installation
 
-Si solo quieres instalar skills específicas:
+If you only want to install specific skills:
 
-1. **Navega al directorio de skills:**
+1. **Navigate to the skills directory:**
 ```bash
    cd ~/.claude/skills/
 ```
 
-2. **Copia solo las carpetas de las skills que necesites:**
+2. **Copy only the skill folders you need:**
 ```bash
-   cp -r /ruta/al/repo/skills/nombre-de-skill ./
+   cp -r /path/to/repo/skills/skill-name ./
 ```
 
-### Verificar la Instalación
+### Verify Installation
 
-Después de instalar las skills:
+After installing the skills:
 
-1. Reinicia Claude Code si está en ejecución
-2. Las skills deberían cargarse automáticamente
-3. Puedes verificar preguntándole a Claude: "¿Qué skills tienes disponibles para desarrollo de APIs?"
+1. Restart Claude Code if it's running
+2. Skills should load automatically
+3. You can verify by asking Claude: "What skills do you have available for API development?"
 
-## Skills Disponibles
+## Available Skills
 
-| Skill | Descripción | Casos de Uso |
-|-------|-------------|--------------|
-| `mulesoft-documentor` | Genera la documentación de una aplicacion MuleSoft | Crear documentación de aplicación MuleSoft cuando esta no existe |
-| `mulesoft-api-patterns` | Genera proyectos de mulesoft basado en patrones de diseño de APIs | Genera códigos de ejemplo basado en principios de Diseño |
+| Skill | Description | Use Cases |
+|-------|-------------|-----------|
+| `mulesoft-documentor` | Generates documentation for a MuleSoft application | Create MuleSoft application documentation when it doesn't exist |
+| `mulesoft-api-patterns` | Generates MuleSoft projects based on API design patterns | Generate sample code based on Design principles |
 
-*(Esta tabla se actualizará conforme se agreguen más skills)*
+*(This table will be updated as more skills are added)*
 
-## Cómo Usar las Skills
+## How to Use the Skills
 
-Las skills se activan automáticamente cuando Claude Code detecta que tu solicitud está relacionada con su dominio. Sin embargo, también puedes invocarlas explícitamente:
+Skills are activated automatically when Claude Code detects that your request is related to their domain. However, you can also invoke them explicitly:
 
-### Ejemplos de Uso
+### Usage Examples
 
-**Generar una especificación OpenAPI:**
+**Generate an OpenAPI specification:**
 ```
-Usando la skill de api-spec-generator, crea una especificación OpenAPI 3.0 
-para un API de gestión de usuarios con endpoints CRUD
-```
-
-**Crear un nuevo endpoint:**
-```
-Crea un endpoint POST /api/products que acepte nombre, precio y descripción, 
-validando que el precio sea positivo
+Using the api-spec-generator skill, create an OpenAPI 3.0 specification 
+for a user management API with CRUD endpoints
 ```
 
-**Generar tests:**
+**Create a new endpoint:**
 ```
-Genera tests unitarios para el endpoint GET /api/users/:id usando Jest
-```
-
-## Crear tus Propias Skills
-
-### Estructura de una Skill
-
-Cada skill debe seguir esta estructura:
-```
-nombre-de-tu-skill/
-├── SKILL.md          # Archivo principal (obligatorio)
-├── templates/        # Templates opcionales
-├── examples/         # Ejemplos de uso
-└── resources/        # Recursos adicionales
+Create a POST /api/products endpoint that accepts name, price, and description, 
+validating that the price is positive
 ```
 
-### Formato del SKILL.md
+**Generate tests:**
+```
+Generate unit tests for the GET /api/users/:id endpoint using Jest
+```
 
-Tu archivo `SKILL.md` debe incluir:
+## Creating Your Own Skills
+
+### Skill Structure
+
+Each skill must follow this structure:
+```
+your-skill-name/
+├── SKILL.md          # Main file (required)
+├── templates/        # Optional templates
+├── examples/         # Usage examples
+└── resources/        # Additional resources
+```
+
+### SKILL.md Format
+
+Your `SKILL.md` file should include:
 ```markdown
-# Nombre de la Skill
+# Skill Name
 
-## Descripción
-[Breve descripción de qué hace la skill]
+## Description
+[Brief description of what the skill does]
 
-## Cuándo Usar Esta Skill
-- [Escenario 1]
-- [Escenario 2]
-- [Escenario 3]
+## When to Use This Skill
+- [Scenario 1]
+- [Scenario 2]
+- [Scenario 3]
 
-## Capacidades
-- [Capacidad 1]
-- [Capacidad 2]
+## Capabilities
+- [Capability 1]
+- [Capability 2]
 
-## Instrucciones para Claude
-[Instrucciones detalladas paso a paso de cómo ejecutar la skill]
+## Instructions for Claude
+[Detailed step-by-step instructions on how to execute the skill]
 
-## Ejemplos de Uso
+## Usage Examples
 
-### Ejemplo 1: [Título]
-**Input del usuario:**
+### Example 1: [Title]
+**User input:**
 ```
-[Ejemplo de lo que el usuario pediría]
-```
-
-**Acción esperada:**
-[Lo que Claude debería hacer]
-
-## Consideraciones Especiales
-- [Nota importante 1]
-- [Nota importante 2]
-
-## Dependencias
-- [Si requiere herramientas específicas]
-- [Si depende de otras skills]
+[Example of what the user would request]
 ```
 
-### Mejores Prácticas
+**Expected action:**
+[What Claude should do]
 
-1. **Sé específico**: Proporciona instrucciones claras y detalladas
-2. **Incluye ejemplos**: Los ejemplos ayudan a Claude a entender el contexto
-3. **Define el alcance**: Especifica claramente cuándo usar (y cuándo no usar) la skill
-4. **Mantén la modularidad**: Cada skill debe tener un propósito bien definido
-5. **Documenta las dependencias**: Indica si requiere librerías, frameworks o herramientas específicas
+## Special Considerations
+- [Important note 1]
+- [Important note 2]
 
-### Ejemplo Completo
+## Dependencies
+- [If it requires specific tools]
+- [If it depends on other skills]
+```
 
-Revisa las skills existentes en este repositorio como referencia. Por ejemplo, `api-spec-generator/SKILL.md` es un buen punto de partida.
+### Best Practices
 
-## Contribuir
+1. **Be specific**: Provide clear and detailed instructions
+2. **Include examples**: Examples help Claude understand the context
+3. **Define scope**: Clearly specify when to use (and when not to use) the skill
+4. **Maintain modularity**: Each skill should have a well-defined purpose
+5. **Document dependencies**: Indicate if it requires specific libraries, frameworks, or tools
 
-¡Las contribuciones son bienvenidas! Si tienes una skill útil para el desarrollo de APIs:
+### Complete Example
 
-1. **Fork** este repositorio
-2. **Crea** una nueva rama (`git checkout -b feature/nueva-skill`)
-3. **Agrega** tu skill siguiendo la estructura descrita
-4. **Commit** tus cambios (`git commit -m 'Add: skill para [funcionalidad]'`)
-5. **Push** a la rama (`git push origin feature/nueva-skill`)
-6. **Abre** un Pull Request
+Review the existing skills in this repository as a reference. For example, `api-spec-generator/SKILL.md` is a good starting point.
 
-### Lineamientos para Contribuciones
+## Contributing
 
-- Asegúrate de que tu skill esté bien documentada
-- Incluye ejemplos de uso claros
-- Verifica que no duplique funcionalidad existente
-- Sigue las convenciones de nomenclatura (kebab-case para nombres de carpetas)
-- Actualiza la tabla de "Skills Disponibles" en este README
+Contributions are welcome! If you have a useful skill for API development:
 
-## Estructura del Repositorio
+1. **Fork** this repository
+2. **Create** a new branch (`git checkout -b feature/new-skill`)
+3. **Add** your skill following the described structure
+4. **Commit** your changes (`git commit -m 'Add: skill for [functionality]'`)
+5. **Push** to the branch (`git push origin feature/new-skill`)
+6. **Open** a Pull Request
+
+### Contribution Guidelines
+
+- Ensure your skill is well documented
+- Include clear usage examples
+- Verify it doesn't duplicate existing functionality
+- Follow naming conventions (kebab-case for folder names)
+- Update the "Available Skills" table in this README
+
+## Repository Structure
 ```
 .
 ├── README.md
@@ -184,29 +184,29 @@ Revisa las skills existentes en este repositorio como referencia. Por ejemplo, `
 │   ├── endpoint-creator/
 │   │   ├── SKILL.md
 │   │   └── examples/
-│   └── ... (más skills)
+│   └── ... (more skills)
 └── docs/
     ├── creating-skills.md
     └── best-practices.md
 ```
 
-## Soporte
+## Support
 
-Si encuentras problemas o tienes preguntas:
+If you encounter problems or have questions:
 
-- 📝 Abre un [Issue](https://github.com/tu-usuario/claude-code-api-skills/issues)
-- 💬 Consulta la [documentación oficial de Claude Code](https://docs.claude.com)
-- 🤝 Únete a las discusiones en la sección de Discussions
+- 📝 Open an [Issue](https://github.com/your-username/claude-code-api-skills/issues)
+- 💬 Check the [official Claude Code documentation](https://docs.claude.com)
+- 🤝 Join the discussions in the Discussions section
 
-## Licencia
+## License
 
 TBD
 
-## Reconocimientos
+## Acknowledgments
 
-- Desarrollado para la comunidad de Claude Code
-- Inspirado por las mejores prácticas de desarrollo de APIs
+- Developed for the Claude Code community
+- Inspired by API development best practices
 
 ---
 
-**Nota**: Este proyecto no está oficialmente afiliado con Anthropic. Es un proyecto comunitario para mejorar la experiencia de desarrollo con Claude Code.
+**Note**: This project is not officially affiliated with Anthropic. It is a community project to improve the development experience with Claude Code.
