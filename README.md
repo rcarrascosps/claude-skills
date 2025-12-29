@@ -61,8 +61,7 @@ Después de instalar las skills:
 | Skill | Descripción | Casos de Uso |
 |-------|-------------|--------------|
 | `mulesoft-documentor` | Genera la documentación de una aplicacion MuleSoft | Crear documentación de aplicación MuleSoft cuando esta no existe |
-| `api-testing` | Genera tests para APIs | Crear suites de pruebas automáticas |
-| `api-docs` | Documenta APIs existentes | Mantener documentación actualizada |
+| `mulesoft-api-patterns` | Genera proyectos de mulesoft basado en patrones de diseño de APIs | Genera códigos de ejemplo basado en principios de Diseño |
 
 *(Esta tabla se actualizará conforme se agreguen más skills)*
 
