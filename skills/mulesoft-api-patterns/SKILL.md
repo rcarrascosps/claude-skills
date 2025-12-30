@@ -15,7 +15,104 @@ When a user requests a MuleSoft project based on an API pattern:
 2. **Load pattern reference**: `view references/patterns/<pattern-name>.md`
 3. **Use base template**: Copy from `assets/mule-base-template/`
 4. **Generate project** following pattern specifications
-5. **Package and present** the complete project to user
+5. **Verify critical configurations** (see Critical Requirements below)
+6. **Package and present** the complete project to user
+
+## Critical Requirements & Common Issues
+
+⚠️ **IMPORTANT**: All generated projects must meet these requirements to compile and run successfully:
+
+### 1. Maven Plugin Version (CRITICAL)
+- **MUST use mule-maven-plugin 4.1.1 or higher**
+- Version 3.8.0 and older are incompatible with Java 17 and Maven 3.9+
+- Error if incorrect: `BasicRepositoryConnectorFactory missing`
+
+```xml
+<mule.maven.plugin.version>4.1.1</mule.maven.plugin.version>
+```
+
+### 2. Java Version
+- **Use Java 17.0.11** for all new projects
+- Configure in pom.xml, .classpath, and .settings/org.eclipse.jdt.core.prefs
+- Set maven.compiler.release property
+
+```xml
+<maven.compiler.source>17</maven.compiler.source>
+<maven.compiler.target>17</maven.compiler.target>
+<maven.compiler.release>17</maven.compiler.release>
+```
+
+### 3. Documentation Namespace (CRITICAL)
+- **MUST include xmlns:doc namespace** in ALL XML configuration files
+- Error if missing: `The prefix "doc" for attribute "doc:name" is not bound`
+
+```xml
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+```
+
+### 4. Validation Module - numberType Required
+- **validation:is-number REQUIRES numberType attribute** in version 2.0.1+
+- Valid values: `INTEGER`, `DECIMAL`, `NUMBER`
+
+```xml
+<validation:is-number value="#[vars.limit]"
+                      numberType="INTEGER"
+                      message="Must be a valid number"/>
+```
+
+### 5. Bulk Insert Pattern (CRITICAL)
+- **db:bulk-insert consumes PAYLOAD, not variables**
+- Use ee:transform → ee:set-payload BEFORE bulk-insert
+- bulk-insert only contains db:sql element
+
+✅ **CORRECT Pattern**:
+```xml
+<ee:transform doc:name="Prepare Data">
+    <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+[...array of objects...]
+        ]]></ee:set-payload>
+    </ee:message>
+</ee:transform>
+
+<db:bulk-insert config-ref="Database_Config">
+    <db:sql><![CDATA[INSERT INTO table (col1, col2)
+        VALUES (:field1, :field2)]]></db:sql>
+</db:bulk-insert>
+```
+
+❌ **INCORRECT - Don't do this**:
+```xml
+<!-- ❌ Using variables inside bulk-insert -->
+<db:bulk-insert>
+    <ee:variables>...</ee:variables>
+    #[vars.data]
+</db:bulk-insert>
+
+<!-- ❌ Using bulkMode attribute (doesn't exist) -->
+<db:bulk-insert bulkMode="true">...</db:bulk-insert>
+
+<!-- ❌ Using db:input-parameters -->
+<db:bulk-insert>
+    <db:input-parameters>...</db:input-parameters>
+</db:bulk-insert>
+```
+
+### 6. mule-artifact.json Dual Location (CRITICAL)
+- **MUST exist in TWO locations**:
+  1. Project root (for mule-maven-plugin 4.x)
+  2. `src/main/mule/` (for Anypoint Studio)
+- Same content in both files
+- Error if missing from root: `mule-artifact.json: File does not exist`
+
+### 7. Troubleshooting Resources
+
+When issues occur, consult these guides:
+- `references/troubleshooting/maven-build-errors.md` - Common build errors and solutions
+- `references/troubleshooting/validation-module.md` - Validation module best practices
+- `references/troubleshooting/bulk-operations.md` - Bulk insert patterns and fixes
 
 ## Supported Patterns
 
@@ -89,11 +186,26 @@ cp -r assets/mule-base-template/ /home/claude/<project-name>
 ```
 
 The base template includes:
-- Standard `pom.xml` with common dependencies
-- `global.xml` with HTTP Listener configuration
-- `config.properties` template
-- `log4j2.xml` for logging
-- `.gitignore` for MuleSoft projects
+
+**Build Configuration**:
+- `pom.xml` - Maven configuration with plugin 4.1.1, Java 17, Mule 4.4.0
+- `mule-artifact.json` - Root location (required for plugin 4.x)
+
+**MuleSoft Configuration**:
+- `src/main/mule/global.xml` - HTTP Listener, DB, error handling (with doc namespace)
+- `src/main/mule/mule-artifact.json` - Studio location (required for import)
+- `src/main/resources/config.properties` - Application properties
+- `src/main/resources/log4j2.xml` - Logging configuration
+
+**Anypoint Studio Files** (for project import):
+- `.project` - Eclipse project descriptor
+- `.classpath` - Java classpath with JavaSE-17 configuration
+- `mule-project.xml` - MuleSoft Studio metadata
+- `.settings/org.eclipse.jdt.core.prefs` - Java 17 compiler settings
+- `.settings/org.eclipse.m2e.core.prefs` - Maven settings
+
+**Other**:
+- `.gitignore` - MuleSoft-specific ignore patterns
 
 ### 4. Implement Pattern
 
@@ -118,12 +230,32 @@ Following the pattern reference, create:
 ### 5. Quality Checks
 
 Ensure the generated project:
+
+**Critical Configuration Checks**:
+- ✅ mule-maven-plugin version is 4.1.1 or higher
+- ✅ Java 17 configured in pom.xml, .classpath, and .settings
+- ✅ xmlns:doc namespace present in ALL XML files
+- ✅ mule-artifact.json exists in BOTH root and src/main/mule/
+- ✅ validation:is-number includes numberType attribute
+- ✅ db:bulk-insert uses payload pattern (not variables)
+- ✅ All Studio configuration files present (.project, .classpath, etc.)
+
+**Code Quality Checks**:
 - ✅ Uses only valid MuleSoft dependencies (check `references/mulesoft-dependencies.md`)
 - ✅ Follows MuleSoft 4.x syntax (not Mule 3)
 - ✅ Includes proper error handling for all flows
-- ✅ Has complete documentation
-- ✅ Compiles without dependency errors
+- ✅ DataWeave transformations are correct
+
+**Documentation Checks**:
+- ✅ README.md is complete
+- ✅ API_EXAMPLES.md has all endpoints
+- ✅ ARCHITECTURE.md explains design
 - ✅ Includes practical usage examples
+
+**Build Verification**:
+- ✅ Run `mvn clean package` to verify compilation
+- ✅ No dependency errors
+- ✅ No XML schema validation errors
 
 ### 6. Package and Present
 
@@ -328,12 +460,47 @@ Include in documentation:
 
 ## Common Pitfalls to Avoid
 
-1. ❌ **Don't use `mule-async-module`** - `<async>` is in core
-2. ❌ **Don't use Mule 3 syntax** - Ensure Mule 4 compatibility
-3. ❌ **Don't hardcode values** - Use property placeholders
-4. ❌ **Don't skip error handling** - Every flow needs it
-5. ❌ **Don't forget documentation** - Essential for users
-6. ❌ **Don't use non-existent dependencies** - Verify all exist
+### Critical Build/Runtime Issues
+
+1. ❌ **Don't use mule-maven-plugin 3.8.0 or older**
+   - Incompatible with Java 17 and Maven 3.9+
+   - Use 4.1.1 or higher
+   - Error: `BasicRepositoryConnectorFactory missing`
+
+2. ❌ **Don't forget xmlns:doc namespace**
+   - Required in ALL XML configuration files
+   - Error: `The prefix "doc" for attribute "doc:name" is not bound`
+   - Add: `xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"`
+
+3. ❌ **Don't use variables in db:bulk-insert**
+   - Bulk-insert consumes PAYLOAD, not variables
+   - Don't use ee:variables inside bulk-insert
+   - Don't use bulkMode attribute (doesn't exist)
+   - Don't use db:input-parameters with bulk-insert
+
+4. ❌ **Don't forget numberType in validation:is-number**
+   - Required in validation module 2.0.1+
+   - Valid values: INTEGER, DECIMAL, NUMBER
+   - Error: `Attribute 'numberType' must appear`
+
+5. ❌ **Don't create only one mule-artifact.json**
+   - Required in TWO locations: root AND src/main/mule/
+   - Plugin 4.x needs root location
+   - Studio needs src/main/mule/ location
+
+6. ❌ **Don't skip Anypoint Studio configuration files**
+   - Required for Studio import: .project, .classpath, mule-project.xml
+   - Required for Java 17: .settings/org.eclipse.jdt.core.prefs
+   - Configure JavaSE-17 in .classpath
+
+### Code Quality Issues
+
+7. ❌ **Don't use `mule-async-module`** - `<async>` is in core
+8. ❌ **Don't use Mule 3 syntax** - Ensure Mule 4 compatibility
+9. ❌ **Don't hardcode values** - Use property placeholders
+10. ❌ **Don't skip error handling** - Every flow needs it
+11. ❌ **Don't forget documentation** - Essential for users
+12. ❌ **Don't use non-existent dependencies** - Verify all exist
 
 ## When to Use Which Pattern
 
@@ -379,18 +546,35 @@ For complex patterns, consult:
 
 Before presenting the project:
 
-- [ ] All flows compile without errors
+**Critical Configuration**:
+- [ ] mule-maven-plugin version is 4.1.1+
+- [ ] Java 17 in pom.xml, .classpath, .settings
+- [ ] xmlns:doc in ALL XML files (global.xml, main flow)
+- [ ] mule-artifact.json in root directory
+- [ ] mule-artifact.json in src/main/mule/
+- [ ] Studio files present (.project, .classpath, mule-project.xml, .settings/)
+- [ ] validation:is-number has numberType attribute
+- [ ] db:bulk-insert uses payload pattern (if applicable)
+
+**Code Quality**:
+- [ ] All flows compile without errors (run mvn clean package)
 - [ ] No invalid dependencies in pom.xml
+- [ ] No XML schema validation errors
 - [ ] Object Store configured if needed
 - [ ] HTTP status codes are appropriate
 - [ ] Error handling on all flows
 - [ ] DataWeave transformations are correct
+
+**Documentation**:
 - [ ] README.md is complete
 - [ ] API_EXAMPLES.md has all endpoints
 - [ ] ARCHITECTURE.md explains design
 - [ ] config.properties has all settings
+
+**Delivery**:
 - [ ] Project is zipped and in outputs folder
 - [ ] Summary document is created
+- [ ] Build verification completed successfully
 
 ## Pattern Combination
 
@@ -415,7 +599,28 @@ This skill enables rapid generation of production-ready MuleSoft projects implem
 1. Understand the user's use case
 2. Select the appropriate pattern(s)
 3. Load relevant reference documentation
-4. Generate complete, documented, working code
-5. Verify quality before presenting
+4. **Use the corrected base template** from `assets/mule-base-template/`
+5. Generate complete, documented, working code
+6. **Verify ALL critical requirements** (plugin version, Java 17, doc namespace, etc.)
+7. **Test with `mvn clean package`** to ensure compilation
+8. Present to user with documentation
 
-The goal is to provide users with immediately usable, well-documented MuleSoft projects that follow API design best practices.
+The goal is to provide users with immediately usable, well-documented MuleSoft projects that follow API design best practices and compile successfully on first try.
+
+## Version History & Updates
+
+**Latest Update**: Critical corrections applied based on real-world troubleshooting:
+- ✅ Updated base template to plugin 4.1.1 and Java 17
+- ✅ Added xmlns:doc namespace to all XML templates
+- ✅ Corrected db:bulk-insert pattern (payload-based)
+- ✅ Added dual mule-artifact.json locations
+- ✅ Added complete Anypoint Studio configuration files
+- ✅ Added validation:is-number numberType requirement
+- ✅ Created troubleshooting guides for common issues
+
+**Troubleshooting Guides Available**:
+- Maven build errors and solutions
+- Validation module best practices
+- Bulk operations patterns
+
+All generated projects now include these corrections by default.

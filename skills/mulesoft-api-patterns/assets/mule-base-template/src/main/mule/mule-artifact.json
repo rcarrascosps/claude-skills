@@ -1,0 +1,21 @@
+{
+  "minMuleVersion": "4.4.0",
+  "requiredProduct": "MULE_EE",
+  "secureProperties": [],
+  "configs": [
+    "global.xml"
+  ],
+  "redeploymentEnabled": true,
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedResources": [],
+      "exportedPackages": [],
+      "includeTestDependencies": false
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

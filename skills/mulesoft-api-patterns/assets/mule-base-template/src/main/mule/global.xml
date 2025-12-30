@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xsi:schemaLocation="
+        http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+        http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+        http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+
+    <!-- Configuration Properties -->
+    <configuration-properties file="config.properties"/>
+
+    <!-- HTTP Listener Configuration -->
+    <http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config">
+        <http:listener-connection host="${http.host}" port="${http.port}"/>
+    </http:listener-config>
+
+    <!-- HTTP Request Configuration (for external APIs) -->
+    <http:request-config name="HTTP_Request_config" doc:name="HTTP Request config">
+        <http:request-connection host="${external.api.host}" port="${external.api.port}"/>
+    </http:request-config>
+
+    <!-- Global Error Handler -->
+    <error-handler name="global-error-handler" doc:name="Global Error Handler">
+        <on-error-propagate type="VALIDATION:INVALID_BOOLEAN, VALIDATION:INVALID_NUMBER" doc:name="Validation Error">
+            <ee:transform doc:name="Transform to 400 Bad Request">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "error": "VALIDATION_ERROR",
+  "message": "Invalid request parameters: " ++ (error.description default "Invalid input"),
+  "timestamp": now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
+}]]></ee:set-payload>
+                </ee:message>
+                <ee:variables>
+                    <ee:set-variable variableName="httpStatus"><![CDATA[400]]></ee:set-variable>
+                </ee:variables>
+            </ee:transform>
+        </on-error-propagate>
+
+        <on-error-propagate type="ANY" doc:name="Generic Error">
+            <ee:transform doc:name="Transform to 500 Server Error">
+                <ee:message>
+                    <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "error": "INTERNAL_SERVER_ERROR",
+  "message": "An unexpected error occurred: " ++ (error.description default "Unknown error"),
+  "timestamp": now() as String {format: "yyyy-MM-dd'T'HH:mm:ss'Z'"}
+}]]></ee:set-payload>
+                </ee:message>
+                <ee:variables>
+                    <ee:set-variable variableName="httpStatus"><![CDATA[500]]></ee:set-variable>
+                </ee:variables>
+            </ee:transform>
+        </on-error-propagate>
+    </error-handler>
+
+</mule>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Configuration>
+    <Appenders>
+        <RollingFile name="file" fileName="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}PROJECT_NAME.log"
+                     filePattern="${sys:mule.home}${sys:file.separator}logs${sys:file.separator}PROJECT_NAME-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="%-5p %d [%t] [processor: %X{processorPath}; event: %X{correlationId}] %c: %m%n"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%-5p %d [%t] [processor: %X{processorPath}; event: %X{correlationId}] %c: %m%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <!-- Application logger -->
+        <AsyncLogger name="org.mule.application" level="INFO"/>
+
+        <!-- HTTP connector logger -->
+        <AsyncLogger name="org.mule.extension.http" level="WARN"/>
+
+        <!-- Root logger -->
+        <AsyncRoot level="INFO">
+            <AppenderRef ref="file"/>
+            <AppenderRef ref="Console"/>
+        </AsyncRoot>
+    </Loggers>
+</Configuration>

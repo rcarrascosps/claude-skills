@@ -1,0 +1,80 @@
+# MuleSoft Project .gitignore
+
+# Mule Runtime
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Build output
+.mule/
+.studio/
+*.zip
+
+# IDE Files
+.idea/
+*.iml
+.settings/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Eclipse/Anypoint Studio
+.metadata/
+.recommenders/
+RemoteSystemsTempFiles/
+studio-workspace/
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs
+logs/
+*.log
+velocity.log*
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# MuleSoft specific
+flows/
+catalog/
+repository/
+.catalog/
+.runtime/
+
+# Credentials (NEVER commit these)
+config.secure.properties
+credentials.properties
+*.p12
+*.jks
+*.keystore
+*.truststore
+
+# CloudHub
+.mule-app/
+
+# Test output
+target/test-classes/
+surefire-reports/
+
+# Node modules (if using npm)
+node_modules/
+
+# Package files
+*.bak
+*.gho
+*.ori
+*.orig
+*.rej
