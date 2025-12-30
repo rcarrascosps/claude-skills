@@ -430,7 +430,7 @@ Include in documentation:
 ## When to Use Which Pattern
 
 **Use Long Running Operations when**:
-- Operations take >2 seconds
+- Operations take > 15 seconds
 - Processing is computationally expensive
 - User shouldn't wait for completion
 - Examples: Report generation, data exports, batch imports
