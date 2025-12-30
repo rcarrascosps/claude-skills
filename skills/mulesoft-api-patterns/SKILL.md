@@ -25,7 +25,11 @@ When a user requests a MuleSoft project based on an API pattern:
 ### 1. Maven Plugin Version (CRITICAL)
 - **MUST use mule-maven-plugin 4.1.1 or higher**
 - Version 3.8.0 and older are incompatible with Java 17 and Maven 3.9+
+- Error if incorrect: `BasicRepositoryConnectorFactory missing`
 
+```xml
+<mule.maven.plugin.version>4.1.1</mule.maven.plugin.version>
+```
 
 ### 2. Java Version
 - **Use Java 17.0.11** for all new projects
@@ -38,8 +42,79 @@ When a user requests a MuleSoft project based on an API pattern:
 <maven.compiler.release>17</maven.compiler.release>
 ```
 
+### 3. Documentation Namespace (CRITICAL)
+- **MUST include xmlns:doc namespace** in ALL XML configuration files
+- Error if missing: `The prefix "doc" for attribute "doc:name" is not bound`
 
-## 3. Supported Patterns
+```xml
+xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+```
+
+### 4. Validation Module - numberType Required
+- **validation:is-number REQUIRES numberType attribute** in version 2.0.1+
+- Valid values: `INTEGER`, `DECIMAL`, `NUMBER`
+
+```xml
+<validation:is-number value="#[vars.limit]"
+                      numberType="INTEGER"
+                      message="Must be a valid number"/>
+```
+
+### 5. Bulk Insert Pattern (CRITICAL)
+- **db:bulk-insert consumes PAYLOAD, not variables**
+- Use ee:transform → ee:set-payload BEFORE bulk-insert
+- bulk-insert only contains db:sql element
+
+✅ **CORRECT Pattern**:
+```xml
+<ee:transform doc:name="Prepare Data">
+    <ee:message>
+        <ee:set-payload><![CDATA[%dw 2.0
+output application/java
+---
+[...array of objects...]
+        ]]></ee:set-payload>
+    </ee:message>
+</ee:transform>
+
+<db:bulk-insert config-ref="Database_Config">
+    <db:sql><![CDATA[INSERT INTO table (col1, col2)
+        VALUES (:field1, :field2)]]></db:sql>
+</db:bulk-insert>
+```
+
+❌ **INCORRECT - Don't do this**:
+```xml
+<!-- ❌ Using variables inside bulk-insert -->
+<db:bulk-insert>
+    <ee:variables>...</ee:variables>
+    #[vars.data]
+</db:bulk-insert>
+
+<!-- ❌ Using bulkMode attribute (doesn't exist) -->
+<db:bulk-insert bulkMode="true">...</db:bulk-insert>
+
+<!-- ❌ Using db:input-parameters -->
+<db:bulk-insert>
+    <db:input-parameters>...</db:input-parameters>
+</db:bulk-insert>
+```
+
+### 6. mule-artifact.json Dual Location (CRITICAL)
+- **MUST exist in TWO locations**:
+  1. Project root (for mule-maven-plugin 4.x)
+  2. `src/main/mule/` (for Anypoint Studio)
+- Same content in both files
+- Error if missing from root: `mule-artifact.json: File does not exist`
+
+### 7. Troubleshooting Resources
+
+When issues occur, consult these guides:
+- `references/troubleshooting/maven-build-errors.md` - Common build errors and solutions
+- `references/troubleshooting/validation-module.md` - Validation module best practices
+- `references/troubleshooting/bulk-operations.md` - Bulk insert patterns and fixes
+
+## Supported Patterns
 
 Load the appropriate reference file for detailed implementation guidance:
 
@@ -430,7 +505,7 @@ Include in documentation:
 ## When to Use Which Pattern
 
 **Use Long Running Operations when**:
-- Operations take > 15 seconds
+- Operations take >2 seconds
 - Processing is computationally expensive
 - User shouldn't wait for completion
 - Examples: Report generation, data exports, batch imports
